@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郑三宝的音乐空间</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+        }
+
+        .profile h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .profile p {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+        }
+
+        .music-player {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .album-cover {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .album-cover:hover img {
+            transform: scale(1.05);
+        }
+
+        .song-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .song-info h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .song-info p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .controls button:hover {
+            transform: scale(1.1);
+        }
+
+        .controls i {
+            font-size: 24px;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            color: #e73c7e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .playlist {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .playlist::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .playlist::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .playlist-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .playlist-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .playlist-item-info {
+            flex-grow: 1;
+        }
+
+        .playlist-item-info h3 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .playlist-item-info p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+
+        .volume-slider {
+            flex-grow: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .volume-slider .volume-progress {
+            width: 50%;
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <img src="https://picsum.photos/150/150" alt="Profile" class="profile-img">
+            <h1>郑三宝的音乐空间</h1>
+            <p>让音乐治愈心灵 🎵</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weibo"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-qq"></i></a>
+                <a href="#"><i class="fab fa-weixin"></i></a>
+            </div>
+        </div>
+
+        <div class="music-player">
+            <div class="album-cover">
+                <img src="https://picsum.photos/200/200" alt="Album Cover" id="album-cover">
+            </div>
+
+            <div class="song-info">
+                <h2 id="current-song">晴天</h2>
+                <p id="current-artist">周杰伦</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">4:30</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="shuffle-btn"><i class="fas fa-random"></i></button>
+                <button id="prev-btn"><i class="fas fa-step-backward"></i></button>
+                <button class="play-btn" id="play-btn">
+                    <i class="fas fa-play" id="play-icon"></i>
+                </button>
+                <button id="next-btn"><i class="fas fa-step-forward"></i></button>
+                <button id="repeat-btn"><i class="fas fa-redo"></i></button>
+            </div>
+
+            <div class="volume-control">
+                <i class="fas fa-volume-down"></i>
+                <div class="volume-slider" id="volume-slider">
+                    <div class="volume-progress"></div>
+                </div>
+                <i class="fas fa-volume-up"></i>
+            </div>
+        </div>
+
+        <div class="playlist">
+            <div class="playlist-item active">
+                <img src="https://picsum.photos/40/40?random=1" alt="Song 1">
+                <div class="playlist-item-info">
+                    <h3>晴天</h3>
+                    <p>周杰伦</p>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://picsum.photos/40/40?random=2" alt="Song 2">
+                <div class="playlist-item-info">
+                    <h3>稻香</h3>
+                    <p>周杰伦</p>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://picsum.photos/40/40?random=3" alt="Song 3">
+                <div class="playlist-item-info">
+                    <h3>告白气球</h3>
+                    <p>周杰伦</p>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://picsum.photos/40/40?random=4" alt="Song 4">
+                <div class="playlist-item-info">
+                    <h3>七里香</h3>
+                    <p>周杰伦</p>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://picsum.photos/40/40?random=5" alt="Song 5">
+                <div class="playlist-item-info">
+                    <h3>青花瓷</h3>
+                    <p>周杰伦</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const currentSong = document.getElementById('current-song');
+        const currentArtist = document.getElementById('current-artist');
+        const playlistItems = document.querySelectorAll('.playlist-item');
+        const volumeSlider = document.getElementById('volume-slider');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const albumCover = document.getElementById('album-cover');
+
+        let isPlaying = false;
+        let currentTrack = 0;
+        let isShuffled = false;
+        let isRepeating = false;
+
+        const playlist = [
+            { title: '晴天', artist: '周杰伦', duration: '4:30' },
+            { title: '稻香', artist: '周杰伦', duration: '3:45' },
+            { title: '告白气球', artist: '周杰伦', duration: '3:35' },
+            { title: '七里香', artist: '周杰伦', duration: '4:15' },
+            { title: '青花瓷', artist: '周杰伦', duration: '3:55' }
+        ];
+
+        // 播放/暂停
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            } else {
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            }
+            updatePlayAnimation();
+        });
+
+        // 上一首
+        prevBtn.addEventListener('click', () => {
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            updateTrack();
+        });
+
+        // 下一首
+        nextBtn.addEventListener('click', () => {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            updateTrack();
+        });
+
+        // 随机播放
+        shuffleBtn.addEventListener('click', () => {
+            isShuffled = !isShuffled;
+            shuffleBtn.style.color = isShuffled ? '#e73c7e' : 'white';
+        });
+
+        // 循环播放
+        repeatBtn.addEventListener('click', () => {
+            isRepeating = !isRepeating;
+            repeatBtn.style.color = isRepeating ? '#e73c7e' : 'white';
+        });
+
+        // 进度条点击
+        progressBar.addEventListener('click', (e) => {
+            const width = progressBar.clientWidth;
+            const clickX = e.offsetX;
+            const percentage = (clickX / width) * 100;
+            progress.style.width = percentage + '%';
+            updateTimeDisplay(percentage);
+        });
+
+        // 音量控制
+        volumeSlider.addEventListener('click', (e) => {
+            const width = volumeSlider.clientWidth;
+            const clickX = e.offsetX;
+            const percentage = (clickX / width) * 100;
+            volumeSlider.querySelector('.volume-progress').style.width = percentage + '%';
+        });
+
+        function updateTrack() {
+            currentSong.textContent = playlist[currentTrack].title;
+            currentArtist.textContent = playlist[currentTrack].artist;
+            durationEl.textContent = playlist[currentTrack].duration;
+            
+            // 更新播放列表活动状态
+            playlistItems.forEach((item, index) => {
+                if (index === currentTrack) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // 更新专辑封面
+            albumCover.src = `https://picsum.photos/200/200?random=${currentTrack + 1}`;
+        }
+
+        function updateTimeDisplay(percentage) {
+            const duration = 270; // 4:30 in seconds
+            const currentSeconds = Math.floor((percentage / 100) * duration);
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updatePlayAnimation() {
+            if (isPlaying) {
+                startProgressAnimation();
+            } else {
+                stopProgressAnimation();
+            }
+        }
+
+        let progressAnimation;
+        function startProgressAnimation() {
+            stopProgressAnimation();
+            progressAnimation = setInterval(() => {
+                const currentWidth = parseFloat(progress.style.width || '0');
+                if (currentWidth >= 100) {
+                    if (isRepeating) {
+                        progress.style.width = '0%';
+                        updateTimeDisplay(0);
+                    } else {
+                        nextBtn.click();
+                    }
+                } else {
+                    progress.style.width = (currentWidth + 0.1) + '%';
+                    updateTimeDisplay(currentWidth + 0.1);
+                }
+            }, 100);
+        }
+
+        function stopProgressAnimation() {
+            clearInterval(progressAnimation);
+        }
+
+        // 为播放列表项添加点击事件
+        playlistItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentTrack = index;
+                updateTrack();
+                if (!isPlaying) {
+                    playBtn.click();
+                }
+            });
+        });
+
+        // 初始化
+        updateTrack();
+    </script>
+</body>
+</html> 
