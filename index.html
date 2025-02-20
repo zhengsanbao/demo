@@ -1,13 +1,67 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网站</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .feature-card {
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .hero-section {
+            background: linear-gradient(45deg, #2196F3, #4CAF50);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部区域 -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-3">欢迎访问我的网站</h1>
+            <p class="lead">这里有一些实用的小工具供您使用</p>
+        </div>
+    </div>
+
+    <!-- 功能卡片区域 -->
+    <div class="container">
+        <div class="row g-4">
+            <!-- 记账本卡片 -->
+            <div class="col-md-6">
+                <div class="card h-100 feature-card" onclick="window.location.href='account-book.html'">
+                    <div class="card-body text-center">
+                        <h3 class="card-title">📊 个人记账本</h3>
+                        <p class="card-text">轻松管理您的个人财务，记录收入支出，查看交易历史。</p>
+                        <a href="account-book.html" class="btn btn-primary">立即使用</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预留其他功能的卡片位置 -->
+            <div class="col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center">
+                        <h3 class="card-title">🔜 更多功能</h3>
+                        <p class="card-text">更多实用功能正在开发中，敬请期待...</p>
+                        <button class="btn btn-secondary" disabled>即将推出</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="container mt-5 py-3 text-center">
+        <p class="text-muted">© 2024 我的网站. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
