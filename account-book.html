@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人记账本</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .balance-card {
+            background: linear-gradient(45deg, #2196F3, #4CAF50);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .transaction-item {
+            border-left: 4px solid transparent;
+            margin-bottom: 10px;
+            padding: 10px;
+            transition: all 0.3s;
+        }
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+        .income { border-left-color: #4CAF50; }
+        .expense { border-left-color: #f44336; }
+        .transfer { border-left-color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">个人记账本</h1>
+        
+        <!-- 余额卡片 -->
+        <div class="balance-card">
+            <h3>总余额</h3>
+            <h2 id="totalBalance">¥ 0.00</h2>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="row mb-4">
+            <div class="col">
+                <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#transactionModal" onclick="setTransactionType('income')">
+                    收入
+                </button>
+            </div>
+            <div class="col">
+                <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#transactionModal" onclick="setTransactionType('expense')">
+                    支出
+                </button>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#transactionModal" onclick="setTransactionType('transfer')">
+                    转账
+                </button>
+            </div>
+        </div>
+
+        <!-- 交易记录 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">交易记录</h5>
+            </div>
+            <div class="card-body">
+                <div id="transactionList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交易模态框 -->
+    <div class="modal fade" id="transactionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">添加交易</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="transactionForm">
+                        <input type="hidden" id="transactionType">
+                        <div class="mb-3">
+                            <label class="form-label">金额</label>
+                            <input type="number" class="form-control" id="amount" required step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">描述</label>
+                            <input type="text" class="form-control" id="description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">日期</label>
+                            <input type="datetime-local" class="form-control" id="date" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addTransaction()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 初始化数据
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let currentBalance = parseFloat(localStorage.getItem('balance')) || 0;
+
+        // 设置交易类型
+        function setTransactionType(type) {
+            document.getElementById('transactionType').value = type;
+            document.getElementById('modalTitle').textContent = {
+                'income': '添加收入',
+                'expense': '添加支出',
+                'transfer': '添加转账'
+            }[type];
+        }
+
+        // 添加交易
+        function addTransaction() {
+            const type = document.getElementById('transactionType').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+            const date = document.getElementById('date').value;
+
+            if (!amount || !description || !date) {
+                alert('请填写所有字段');
+                return;
+            }
+
+            const transaction = {
+                id: Date.now(),
+                type,
+                amount,
+                description,
+                date,
+                timestamp: new Date().getTime()
+            };
+
+            // 更新余额
+            if (type === 'income') {
+                currentBalance += amount;
+            } else if (type === 'expense' || type === 'transfer') {
+                currentBalance -= amount;
+            }
+
+            // 保存交易记录
+            transactions.push(transaction);
+            saveData();
+            updateUI();
+
+            // 关闭模态框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('transactionModal'));
+            modal.hide();
+
+            // 重置表单
+            document.getElementById('transactionForm').reset();
+        }
+
+        // 保存数据到localStorage
+        function saveData() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            localStorage.setItem('balance', currentBalance.toString());
+        }
+
+        // 更新UI
+        function updateUI() {
+            // 更新余额显示
+            document.getElementById('totalBalance').textContent = `¥ ${currentBalance.toFixed(2)}`;
+
+            // 更新交易列表
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = '';
+
+            // 按时间排序，最新的在前
+            transactions.sort((a, b) => b.timestamp - a.timestamp);
+
+            transactions.forEach(transaction => {
+                const div = document.createElement('div');
+                div.className = `transaction-item ${transaction.type}`;
+                
+                const amount = transaction.type === 'income' 
+                    ? `+${transaction.amount.toFixed(2)}` 
+                    : `-${transaction.amount.toFixed(2)}`;
+
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${transaction.description}</h6>
+                            <small class="text-muted">${new Date(transaction.date).toLocaleString()}</small>
+                        </div>
+                        <div class="text-${transaction.type === 'income' ? 'success' : 'danger'}">
+                            ¥ ${amount}
+                        </div>
+                    </div>
+                `;
+
+                transactionList.appendChild(div);
+            });
+        }
+
+        // 初始化页面
+        updateUI();
+    </script>
+</body>
+</html> 
